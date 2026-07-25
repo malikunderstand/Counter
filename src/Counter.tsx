@@ -2,18 +2,35 @@ import { useState } from 'react';
 import 'boxicons/css/boxicons.min.css';
 import '../src/App.css';
 
+interface HistoryItem {
+  value: number;
+  action: 'increment' | 'decrement';
+}
+
 function Counter() {
   const [count, setCount] = useState(0);
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
 
   const handleIncrement = () => {
-    setCount(count + 1);
-    setHistory([...history, { value: count + 1, action: 'increment' }]);
+    setCount((prev) => {
+      const newCount = prev + 1;
+      setHistory((prevHistory) => [
+        ...prevHistory,
+        { value: newCount, action: 'increment' },
+      ]);
+      return newCount;
+    });
   };
 
   const handleDecrement = () => {
-    setCount(count - 1);
-    setHistory([...history, { value: count - 1, action: 'decrement' }]);
+    setCount((prev) => {
+      const newCount = prev - 1;
+      setHistory((prevHistory) => [
+        ...prevHistory,
+        { value: newCount, action: 'decrement' },
+      ]);
+      return newCount;
+    });
   };
 
   const handleReset = () => {
@@ -50,10 +67,12 @@ function Counter() {
               Counter<span>Pro</span>
             </span>
           </div>
+
           <div className="brand-stats">
             <span className="brand-badge">
               <i className="bx bx-history"></i> Steps: {history.length}
             </span>
+
             <span className="brand-badge">
               <i className="bx bx-trending-up"></i> Max:{' '}
               {Math.max(...history.map((h) => h.value), 0)}
@@ -75,9 +94,13 @@ function Counter() {
               </div>
 
               <div className="counter-display">
-                <div className="counter-number" style={{ color: getColor() }}>
+                <div
+                  className="counter-number"
+                  style={{ color: getColor() }}
+                >
                   {count}
                 </div>
+
                 <div className="counter-message">{getMessage()}</div>
               </div>
 
@@ -85,7 +108,6 @@ function Counter() {
                 <button
                   onClick={handleDecrement}
                   className="counter-btn btn-decrement"
-                  aria-label="Decrease count"
                 >
                   <i className="bx bx-minus"></i>
                 </button>
@@ -93,7 +115,6 @@ function Counter() {
                 <button
                   onClick={handleReset}
                   className="counter-btn btn-reset"
-                  aria-label="Reset count"
                 >
                   <i className="bx bx-reset"></i>
                 </button>
@@ -101,7 +122,6 @@ function Counter() {
                 <button
                   onClick={handleIncrement}
                   className="counter-btn btn-increment"
-                  aria-label="Increase count"
                 >
                   <i className="bx bx-plus"></i>
                 </button>
@@ -117,6 +137,7 @@ function Counter() {
                     }}
                   ></div>
                 </div>
+
                 <div className="counter-tips">
                   <span>⬅️ Decrement</span>
                   <span>🔄 Reset</span>
@@ -125,12 +146,13 @@ function Counter() {
               </div>
             </div>
 
-            {/* Stats Sidebar */}
+            {/* Stats */}
             <div className="counter-stats">
               <div className="stat-card">
                 <div className="stat-icon positive">
                   <i className="bx bx-up-arrow-alt"></i>
                 </div>
+
                 <div className="stat-info">
                   <span className="stat-label">Increments</span>
                   <span className="stat-value">
@@ -143,6 +165,7 @@ function Counter() {
                 <div className="stat-icon negative">
                   <i className="bx bx-down-arrow-alt"></i>
                 </div>
+
                 <div className="stat-info">
                   <span className="stat-label">Decrements</span>
                   <span className="stat-value">
@@ -155,6 +178,7 @@ function Counter() {
                 <div className="stat-icon total">
                   <i className="bx bx-trending-up"></i>
                 </div>
+
                 <div className="stat-info">
                   <span className="stat-label">Total Actions</span>
                   <span className="stat-value">{history.length}</span>
@@ -164,33 +188,44 @@ function Counter() {
               <div className="stat-card">
                 <div
                   className="stat-icon status"
-                  style={{ background: getColor() + '33', color: getColor() }}
+                  style={{
+                    background: getColor() + '33',
+                    color: getColor(),
+                  }}
                 >
                   <i className="bx bx-signal-4"></i>
                 </div>
+
                 <div className="stat-info">
                   <span className="stat-label">Status</span>
-                  <span className="stat-value" style={{ color: getColor() }}>
+                  <span
+                    className="stat-value"
+                    style={{ color: getColor() }}
+                  >
                     {count > 0
                       ? 'Positive'
                       : count < 0
-                        ? 'Negative'
-                        : 'Neutral'}
+                      ? 'Negative'
+                      : 'Neutral'}
                   </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* History Log */}
+          {/* History */}
           {history.length > 0 && (
             <div className="counter-history">
               <div className="history-header">
                 <h5>
                   <i className="bx bx-time"></i> Activity History
                 </h5>
-                <span className="history-count">{history.length} actions</span>
+
+                <span className="history-count">
+                  {history.length} actions
+                </span>
               </div>
+
               <div className="history-list">
                 {history
                   .slice(-10)
@@ -200,7 +235,11 @@ function Counter() {
                       <span className="history-action">
                         {item.action === 'increment' ? '➕' : '➖'}
                       </span>
-                      <span className="history-value">Count: {item.value}</span>
+
+                      <span className="history-value">
+                        Count: {item.value}
+                      </span>
+
                       <span className="history-time">
                         {new Date().toLocaleTimeString()}
                       </span>
@@ -222,19 +261,26 @@ function Counter() {
                 Counter<span>Pro</span>
               </span>
             </div>
+
             <p className="footer-copyright">
               © 2026 <b>CounterPro</b> — Made with{' '}
-              <i className="bx bxs-heart" style={{ color: '#e50914' }}></i> for
-              React
+              <i
+                className="bx bxs-heart"
+                style={{ color: '#e50914' }}
+              ></i>{' '}
+              for React
             </p>
+
             <div className="footer-social">
-              <a href="#" aria-label="GitHub">
+              <a href="#">
                 <i className="bx bxl-github"></i>
               </a>
-              <a href="#" aria-label="Twitter">
+
+              <a href="#">
                 <i className="bx bxl-twitter"></i>
               </a>
-              <a href="#" aria-label="LinkedIn">
+
+              <a href="#">
                 <i className="bx bxl-linkedin"></i>
               </a>
             </div>
