@@ -40,7 +40,7 @@ function Counter() {
   };
 
   return (
-    <>
+    < id="root">
       {/* ===== NAVBAR ===== */}
       <nav className="counter-navbar">
         <div className="counter-container">
